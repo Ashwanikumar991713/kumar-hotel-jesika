@@ -1,42 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Kumar Hotel Premium Design System */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
+    /* Luxury Color Palette */
+    --background: 42 15% 98%;
+    --foreground: 220 100% 8%;
+    
+    /* Premium Gold */
+    --primary: 43 74% 49%;
+    --primary-foreground: 42 15% 98%;
+    --primary-light: 43 84% 65%;
+    --primary-dark: 43 64% 35%;
+    
+    /* Royal Blue */
+    --secondary: 220 100% 25%;
+    --secondary-foreground: 42 15% 98%;
+    --secondary-light: 220 85% 45%;
+    --secondary-dark: 220 100% 15%;
+    
+    /* Luxury Neutrals */
+    --muted: 42 20% 95%;
+    --muted-foreground: 220 15% 35%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
+    --card-foreground: 220 100% 8%;
+    
+    /* Accent Colors */
+    --accent: 42 35% 92%;
+    --accent-foreground: 220 100% 15%;
+    
+    /* Interactive Elements */
+    --border: 42 25% 88%;
+    --input: 42 25% 88%;
+    --ring: 43 74% 49%;
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Luxury Gradients */
+    --gradient-gold: linear-gradient(135deg, hsl(43 74% 49%) 0%, hsl(43 84% 65%) 100%);
+    --gradient-royal: linear-gradient(135deg, hsl(220 100% 25%) 0%, hsl(220 85% 45%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(220 100% 15% / 0.9) 0%, hsl(43 64% 35% / 0.8) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100% / 0.8) 0%, hsl(42 20% 95% / 0.6) 100%);
+    
+    /* Shadows */
+    --shadow-luxury: 0 10px 40px -10px hsl(220 100% 15% / 0.15);
+    --shadow-gold: 0 8px 32px -8px hsl(43 74% 49% / 0.25);
+    --shadow-elegant: 0 4px 20px -4px hsl(220 100% 15% / 0.1);
+    
+    /* Radius */
+    --radius: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +119,72 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter;
   }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-playfair;
+  }
+}
+
+@layer components {
+  /* Premium Button Variants */
+  .btn-luxury {
+    @apply bg-gradient-to-r from-primary to-primary-light text-primary-foreground px-8 py-4 rounded-lg font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] hover:scale-105 hover:-translate-y-1;
+  }
+  
+  .btn-royal {
+    @apply bg-gradient-to-r from-secondary to-secondary-light text-secondary-foreground px-8 py-4 rounded-lg font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_30px_rgba(30,58,138,0.4)] hover:scale-105 hover:-translate-y-1;
+  }
+  
+  .btn-elegant {
+    @apply border-2 border-primary text-primary px-8 py-4 rounded-lg font-semibold tracking-wide transition-all duration-300 hover:bg-primary hover:text-primary-foreground hover:shadow-[0_0_20px_rgba(212,175,55,0.3)];
+  }
+
+  /* Luxury Card Effects */
+  .card-luxury {
+    @apply bg-gradient-to-br from-card to-accent backdrop-blur-sm border border-border/50 rounded-xl transition-all duration-500 hover:shadow-[0_20px_60px_rgba(212,175,55,0.15)] hover:-translate-y-2;
+  }
+  
+  /* Text Gradients */
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent;
+  }
+  
+  .text-gradient-royal {
+    @apply bg-gradient-to-r from-secondary to-secondary-light bg-clip-text text-transparent;
+  }
+  
+  /* Luxury Animations */
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.8s ease-out forwards;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.6s ease-out forwards;
+  }
+  
+  /* Floating Voice Assistant */
+  .floating-voice-btn {
+    @apply fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-primary to-primary-light text-primary-foreground rounded-full shadow-[0_8px_32px_rgba(212,175,55,0.4)] flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_12px_40px_rgba(212,175,55,0.6)] z-50 cursor-pointer;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
 }

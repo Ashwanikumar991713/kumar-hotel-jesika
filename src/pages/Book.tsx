@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Calendar, Users, Phone, Mail, User, CreditCard } from 'lucide-react';
+import { Calendar, Users, Phone, Mail, User, CreditCard, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import RazorpayPayment from '@/components/RazorpayPayment';
 
 const Book = () => {
   const { toast } = useToast();
@@ -31,6 +32,44 @@ const Book = () => {
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
+
+  // Calculate pricing based on room type and dates
+  const getRoomPrice = (roomType: string): number => {
+    switch (roomType) {
+      case 'standard': return 999;
+      case 'deluxe': return 1499;
+      case 'luxury': return 1999;
+      default: return 0;
+    }
+  };
+
+  const calculateTotal = (): { totalAmount: number; numberOfNights: number; advanceAmount: number } => {
+    if (!formData.checkIn || !formData.checkOut || !formData.roomType) {
+      return { totalAmount: 0, numberOfNights: 0, advanceAmount: 0 };
+    }
+
+    const checkIn = new Date(formData.checkIn);
+    const checkOut = new Date(formData.checkOut);
+    const timeDiff = checkOut.getTime() - checkIn.getTime();
+    const numberOfNights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    
+    if (numberOfNights <= 0) {
+      return { totalAmount: 0, numberOfNights: 0, advanceAmount: 0 };
+    }
+
+    const roomPrice = getRoomPrice(formData.roomType);
+    const totalAmount = roomPrice * numberOfNights;
+    const advanceAmount = Math.round(totalAmount / 2); // 50% advance
+
+    return { totalAmount, numberOfNights, advanceAmount };
+  };
+
+  const { totalAmount, numberOfNights, advanceAmount } = calculateTotal();
+
+  // Check if form is valid for payment
+  const isFormValid = formData.name && formData.email && formData.phone && 
+                     formData.checkIn && formData.checkOut && formData.roomType && 
+                     formData.guests && totalAmount > 0;
 
   return (
     <div className="pt-20">
@@ -191,9 +230,74 @@ const Book = () => {
                     />
                   </div>
 
-                  <Button type="submit" className="btn-luxury w-full">
-                    Submit Booking Request
-                  </Button>
+                  {isFormValid && totalAmount > 0 ? (
+                    <div className="space-y-4">
+                      {/* Payment Summary */}
+                      <div className="bg-accent/20 p-4 rounded-lg border border-border">
+                        <div className="flex items-center space-x-2 mb-3">
+                          <Info className="w-4 h-4 text-primary" />
+                          <span className="font-semibold text-foreground">Payment Summary</span>
+                        </div>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span>Room: {formData.roomType.charAt(0).toUpperCase() + formData.roomType.slice(1)}</span>
+                            <span>₹{getRoomPrice(formData.roomType)}/night</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Duration: {numberOfNights} {numberOfNights === 1 ? 'night' : 'nights'}</span>
+                            <span></span>
+                          </div>
+                          <div className="flex justify-between font-semibold border-t pt-2">
+                            <span>Total Amount:</span>
+                            <span>₹{totalAmount}</span>
+                          </div>
+                          <div className="flex justify-between text-primary font-semibold">
+                            <span>Advance Payment (50%):</span>
+                            <span>₹{advanceAmount}</span>
+                          </div>
+                          <div className="flex justify-between text-sm text-muted-foreground">
+                            <span>Remaining at Check-in:</span>
+                            <span>₹{totalAmount - advanceAmount}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <RazorpayPayment
+                        paymentData={{
+                          name: formData.name,
+                          email: formData.email,
+                          phone: formData.phone,
+                          roomType: formData.roomType,
+                          checkIn: formData.checkIn,
+                          checkOut: formData.checkOut,
+                          guests: formData.guests,
+                          specialRequests: formData.specialRequests,
+                          totalAmount,
+                          advanceAmount
+                        }}
+                        onSuccess={() => {
+                          toast({
+                            title: "Booking Confirmed!",
+                            description: "Your advance payment is successful. We'll send you booking confirmation details shortly.",
+                          });
+                        }}
+                        onError={(error) => {
+                          toast({
+                            title: "Payment Failed",
+                            description: error,
+                            variant: "destructive",
+                          });
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="text-center p-4 bg-muted/30 rounded-lg">
+                      <Info className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-muted-foreground text-sm">
+                        Please fill all required fields to proceed with payment
+                      </p>
+                    </div>
+                  )}
                 </form>
               </div>
             </div>

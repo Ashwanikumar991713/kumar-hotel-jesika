@@ -66,8 +66,12 @@ const About = () => {
           
           <div className="max-w-4xl mx-auto">
             <div className="card-luxury p-12 text-center">
-              <div className="w-32 h-32 bg-gradient-to-r from-primary to-primary-light rounded-full flex items-center justify-center mx-auto mb-8">
-                <span className="text-5xl font-playfair font-bold text-primary-foreground">AK</span>
+              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-8 shadow-luxury">
+                <img
+                  src="/lovable-uploads/29e88301-1cc2-4e59-a728-99f9f30d8861.png"
+                  alt="Mr. Ashwani Kumar - Founder"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <h3 className="text-3xl font-playfair font-bold text-foreground mb-4">
                 Mr. Ashwani Kumar

@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navigation from "./components/Navigation";
-import VoiceAssistant from "./components/VoiceAssistant";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -38,7 +37,7 @@ const App = () => (
             </Routes>
           </main>
           <Footer />
-          <VoiceAssistant />
+          <div dangerouslySetInnerHTML={{ __html: '<elevenlabs-convai agent-id="agent_5301k21vdn5yf9pb10zzsphh2agm"></elevenlabs-convai>' }} />
         </div>
       </BrowserRouter>
     </TooltipProvider>

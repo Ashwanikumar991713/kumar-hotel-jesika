@@ -33,6 +33,18 @@ const Navigation = () => {
             </div>
           </Link>
 
+          {/* Back to Home Button */}
+          <Link 
+            to="/" 
+            className="hidden lg:flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-secondary/80 
+                       hover:from-secondary/90 hover:to-secondary/70 text-secondary-foreground transition-all duration-300 
+                       hover:scale-105 shadow-md hover:shadow-lg"
+            onClick={() => window.fbq && window.fbq('trackCustom', 'BackToHome')}
+          >
+            <span className="text-lg">🏠</span>
+            <span className="text-sm font-medium">Home</span>
+          </Link>
+
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
             {navItems.map((item) => (
@@ -79,6 +91,20 @@ const Navigation = () => {
         {isOpen && (
           <div className="lg:hidden pb-6 pt-2 animate-fade-in">
             <div className="flex flex-col space-y-4">
+              {/* Mobile Back to Home Button */}
+              <Link 
+                to="/" 
+                onClick={() => {
+                  setIsOpen(false);
+                  window.fbq && window.fbq('trackCustom', 'BackToHome');
+                }}
+                className="flex items-center space-x-2 py-2 px-4 rounded-lg bg-gradient-to-r from-secondary to-secondary/80 
+                           text-secondary-foreground transition-colors hover:from-secondary/90 hover:to-secondary/70"
+              >
+                <span className="text-lg">🏠</span>
+                <span className="text-sm font-medium">Back to Home</span>
+              </Link>
+              
               {navItems.map((item) => (
                 <Link
                   key={item.path}

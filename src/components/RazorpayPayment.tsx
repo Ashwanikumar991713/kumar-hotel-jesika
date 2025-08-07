@@ -25,6 +25,7 @@ interface RazorpayPaymentProps {
 declare global {
   interface Window {
     Razorpay: any;
+    fbq: any;
   }
 }
 
@@ -144,6 +145,17 @@ const RazorpayPayment = ({ paymentData, onSuccess, onError }: RazorpayPaymentPro
         },
         handler: async function (response: any) {
           console.log('Payment successful:', response);
+          
+          // Track Meta Pixel Purchase event
+          if (window.fbq) {
+            window.fbq('track', 'Purchase', {
+              value: paymentData.advanceAmount,
+              currency: 'INR',
+              content_name: `${paymentData.roomType} - Room Booking`,
+              content_category: 'Hotel Booking'
+            });
+          }
+          
           try {
             // Send data to webhook
             await sendWebhookData(response);

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Rooms from "./pages/Rooms";
@@ -37,6 +38,7 @@ const App = () => (
             </Routes>
           </main>
           <Footer />
+          <ScrollToTop />
           <div dangerouslySetInnerHTML={{ __html: '<elevenlabs-convai agent-id="agent_5601k22k9r5cf928ja9g7cyp8jvf"></elevenlabs-convai>' }} />
         </div>
       </BrowserRouter>

@@ -34,10 +34,39 @@ const RazorpayPayment = ({ paymentData, onSuccess, onError }: RazorpayPaymentPro
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
+      // Check if Razorpay is already loaded
+      if (window.Razorpay) {
+        console.log('Razorpay already loaded');
+        resolve(true);
+        return;
+      }
+
+      // Check if script already exists
+      const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+      if (existingScript) {
+        console.log('Razorpay script already exists, waiting for load');
+        existingScript.addEventListener('load', () => {
+          console.log('Existing Razorpay script loaded');
+          resolve(true);
+        });
+        existingScript.addEventListener('error', () => {
+          console.error('Existing Razorpay script failed to load');
+          resolve(false);
+        });
+        return;
+      }
+
+      console.log('Loading Razorpay script');
       const script = document.createElement('script');
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
+      script.onload = () => {
+        console.log('Razorpay script loaded successfully');
+        resolve(true);
+      };
+      script.onerror = () => {
+        console.error('Failed to load Razorpay script');
+        resolve(false);
+      };
       document.body.appendChild(script);
     });
   };
@@ -76,24 +105,35 @@ const RazorpayPayment = ({ paymentData, onSuccess, onError }: RazorpayPaymentPro
   };
 
   const handlePayment = async () => {
+    console.log('Starting payment process...');
     setIsLoading(true);
 
     try {
+      console.log('Loading Razorpay script...');
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
         throw new Error('Razorpay SDK failed to load');
       }
 
-      // Create order ID (in production, this should come from your backend)
-      const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      console.log('Razorpay script loaded, checking window.Razorpay...');
+      if (!window.Razorpay) {
+        throw new Error('Razorpay is not available on window object');
+      }
 
+      console.log('Payment data:', {
+        amount: paymentData.advanceAmount,
+        name: paymentData.name,
+        email: paymentData.email,
+        phone: paymentData.phone
+      });
+
+      // Using your live Razorpay key
       const options = {
-        key: 'rzp_live_iPfvysNSuplCpH',
+        key: 'rzp_live_iPfvysNSuplCpH', // Your actual live key
         amount: paymentData.advanceAmount * 100, // Amount in paise
         currency: 'INR',
         name: 'Kumar Hotel',
         description: `Room Booking Advance - ${paymentData.roomType}`,
-        order_id: orderId,
         prefill: {
           name: paymentData.name,
           email: paymentData.email,
@@ -103,6 +143,7 @@ const RazorpayPayment = ({ paymentData, onSuccess, onError }: RazorpayPaymentPro
           color: '#D4AF37',
         },
         handler: async function (response: any) {
+          console.log('Payment successful:', response);
           try {
             // Send data to webhook
             await sendWebhookData(response);
@@ -121,9 +162,11 @@ const RazorpayPayment = ({ paymentData, onSuccess, onError }: RazorpayPaymentPro
               variant: "destructive",
             });
           }
+          setIsLoading(false);
         },
         modal: {
           ondismiss: function() {
+            console.log('Payment modal dismissed');
             toast({
               title: "Payment Cancelled",
               description: "Payment was cancelled. Your booking is not confirmed.",
@@ -140,8 +183,11 @@ const RazorpayPayment = ({ paymentData, onSuccess, onError }: RazorpayPaymentPro
         }
       };
 
+      console.log('Creating Razorpay instance with options:', options);
       const razorpay = new window.Razorpay(options);
+      
       razorpay.on('payment.failed', function (response: any) {
+        console.error('Payment failed:', response);
         toast({
           title: "Payment Failed",
           description: response.error.description || "Payment failed. Please try again.",
@@ -151,6 +197,7 @@ const RazorpayPayment = ({ paymentData, onSuccess, onError }: RazorpayPaymentPro
         setIsLoading(false);
       });
 
+      console.log('Opening Razorpay checkout...');
       razorpay.open();
     } catch (error) {
       console.error('Payment error:', error);
@@ -160,7 +207,6 @@ const RazorpayPayment = ({ paymentData, onSuccess, onError }: RazorpayPaymentPro
         variant: "destructive",
       });
       onError?.(error instanceof Error ? error.message : 'Payment failed');
-    } finally {
       setIsLoading(false);
     }
   };

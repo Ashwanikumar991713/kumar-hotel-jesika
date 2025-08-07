@@ -49,16 +49,17 @@ const ScrollToTop = () => {
     <Button
       onClick={scrollToTop}
       className="fixed bottom-[30px] right-[20px] z-50 w-14 h-14 rounded-full 
-                 bg-gradient-to-br from-purple-500 via-blue-600 to-indigo-700 
-                 hover:from-purple-400 hover:via-blue-500 hover:to-indigo-600
-                 text-white shadow-lg hover:shadow-2xl shadow-purple-500/30
-                 hover:shadow-purple-400/40 transition-all duration-300 
-                 hover:scale-110 border border-white/10 backdrop-blur-sm
-                 animate-pulse hover:animate-none"
+                 bg-gradient-to-br from-primary via-primary/90 to-primary/80
+                 hover:from-primary/90 hover:via-primary/80 hover:to-primary/70
+                 text-primary-foreground shadow-2xl shadow-primary/30
+                 hover:shadow-primary/40 transition-all duration-500 
+                 hover:scale-110 border-2 border-primary/20 hover:border-primary/40
+                 backdrop-blur-sm animate-bounce hover:animate-none
+                 hover:rotate-12 transform-gpu"
       size="icon"
       aria-label="Scroll to top"
     >
-      <ChevronUp className="h-6 w-6" />
+      <ChevronUp className="h-7 w-7 stroke-[2.5]" />
     </Button>
   );
 };

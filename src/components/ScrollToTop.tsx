@@ -10,22 +10,17 @@ declare global {
 
 const ScrollToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
-      // Show button only if:
-      // 1. User has scrolled down more than 300px
-      // 2. User is scrolling up (currentScrollY < lastScrollY)
-      if (currentScrollY > 300 && currentScrollY < lastScrollY) {
+      // Show button when user has scrolled down more than 100px
+      if (currentScrollY > 100) {
         setIsVisible(true);
-      } else if (currentScrollY <= 100 || currentScrollY > lastScrollY) {
+      } else {
         setIsVisible(false);
       }
-      
-      setLastScrollY(currentScrollY);
     };
 
     const throttledHandleScroll = () => {
@@ -34,7 +29,7 @@ const ScrollToTop = () => {
 
     window.addEventListener('scroll', throttledHandleScroll);
     return () => window.removeEventListener('scroll', throttledHandleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -53,14 +48,17 @@ const ScrollToTop = () => {
   return (
     <Button
       onClick={scrollToTop}
-      className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-gradient-to-r from-primary to-primary/80 
-                 hover:from-primary/90 hover:to-primary/70 text-white shadow-lg hover:shadow-xl 
-                 transition-all duration-300 animate-pulse hover:animate-none hover:scale-110
-                 border border-white/20"
+      className="fixed bottom-[30px] right-[20px] z-50 w-14 h-14 rounded-full 
+                 bg-gradient-to-br from-purple-500 via-blue-600 to-indigo-700 
+                 hover:from-purple-400 hover:via-blue-500 hover:to-indigo-600
+                 text-white shadow-lg hover:shadow-2xl shadow-purple-500/30
+                 hover:shadow-purple-400/40 transition-all duration-300 
+                 hover:scale-110 border border-white/10 backdrop-blur-sm
+                 animate-pulse hover:animate-none"
       size="icon"
       aria-label="Scroll to top"
     >
-      <ChevronUp className="h-6 w-6 animate-bounce" />
+      <ChevronUp className="h-6 w-6" />
     </Button>
   );
 };

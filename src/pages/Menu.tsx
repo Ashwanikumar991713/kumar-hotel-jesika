@@ -286,7 +286,16 @@ const Menu = () => {
             or to place an order for room service.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="btn-luxury bg-primary text-primary-foreground">
+            <button 
+              onClick={() => {
+                const convaiWidget = document.querySelector('elevenlabs-convai');
+                if (convaiWidget && convaiWidget.shadowRoot) {
+                  const button = convaiWidget.shadowRoot.querySelector('button');
+                  if (button) button.click();
+                }
+              }}
+              className="btn-luxury bg-primary text-primary-foreground"
+            >
               Talk to Jesika
             </button>
             <a href="tel:+919917132288" className="btn-elegant border-secondary-foreground text-secondary-foreground hover:bg-secondary-foreground hover:text-secondary">

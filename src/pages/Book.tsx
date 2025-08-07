@@ -244,7 +244,16 @@ const Book = () => {
                     </div>
                   </button>
 
-                  <button className="w-full btn-elegant text-left">
+                  <button 
+                    onClick={() => {
+                      const convaiWidget = document.querySelector('elevenlabs-convai');
+                      if (convaiWidget && convaiWidget.shadowRoot) {
+                        const button = convaiWidget.shadowRoot.querySelector('button');
+                        if (button) button.click();
+                      }
+                    }}
+                    className="w-full btn-elegant text-left"
+                  >
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-gradient-to-r from-primary to-primary-light rounded-full flex items-center justify-center">
                         <span className="text-primary-foreground font-bold text-sm">J</span>

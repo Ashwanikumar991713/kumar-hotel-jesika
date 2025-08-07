@@ -111,7 +111,16 @@ const Contact = () => {
                     <p className="text-muted-foreground text-sm">Instant help</p>
                   </div>
                 </div>
-                <button className="text-primary hover:text-primary-dark font-semibold transition-colors">
+                <button 
+                  onClick={() => {
+                    const convaiWidget = document.querySelector('elevenlabs-convai');
+                    if (convaiWidget && convaiWidget.shadowRoot) {
+                      const button = convaiWidget.shadowRoot.querySelector('button');
+                      if (button) button.click();
+                    }
+                  }}
+                  className="text-primary hover:text-primary-dark font-semibold transition-colors"
+                >
                   Talk to Jesika
                 </button>
                 <p className="text-sm text-muted-foreground mt-2">

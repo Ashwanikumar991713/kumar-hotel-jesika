@@ -124,7 +124,16 @@ const Rooms = () => {
                       <Link to="/book" className="btn-luxury flex-1 text-center">
                         Book Now
                       </Link>
-                      <button className="btn-elegant flex-1">
+                      <button 
+                        onClick={() => {
+                          const convaiWidget = document.querySelector('elevenlabs-convai');
+                          if (convaiWidget && convaiWidget.shadowRoot) {
+                            const button = convaiWidget.shadowRoot.querySelector('button');
+                            if (button) button.click();
+                          }
+                        }}
+                        className="btn-elegant flex-1"
+                      >
                         Ask Jesika
                       </button>
                     </div>

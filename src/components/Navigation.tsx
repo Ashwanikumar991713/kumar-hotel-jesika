@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, Mail } from 'lucide-react';
+import { Menu, X, Phone, Mail, Home } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,12 +36,13 @@ const Navigation = () => {
           {/* Back to Home Button */}
           <Link 
             to="/" 
-            className="hidden lg:flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-secondary/80 
-                       hover:from-secondary/90 hover:to-secondary/70 text-secondary-foreground transition-all duration-300 
-                       hover:scale-105 shadow-md hover:shadow-lg"
+            className="hidden lg:flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary to-primary/90 
+                       hover:from-primary/90 hover:to-primary/80 text-primary-foreground transition-all duration-300 
+                       hover:scale-105 shadow-lg hover:shadow-xl shadow-primary/25 hover:shadow-primary/40
+                       border border-primary/20 hover:border-primary/30 backdrop-blur-sm"
             onClick={() => window.fbq && window.fbq('trackCustom', 'BackToHome')}
           >
-            <span className="text-lg">🏠</span>
+            <Home className="w-4 h-4" />
             <span className="text-sm font-medium">Home</span>
           </Link>
 
@@ -98,10 +99,11 @@ const Navigation = () => {
                   setIsOpen(false);
                   window.fbq && window.fbq('trackCustom', 'BackToHome');
                 }}
-                className="flex items-center space-x-2 py-2 px-4 rounded-lg bg-gradient-to-r from-secondary to-secondary/80 
-                           text-secondary-foreground transition-colors hover:from-secondary/90 hover:to-secondary/70"
+                className="flex items-center space-x-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-primary to-primary/90 
+                           text-primary-foreground transition-all duration-300 hover:from-primary/90 hover:to-primary/80
+                           shadow-md hover:shadow-lg shadow-primary/20"
               >
-                <span className="text-lg">🏠</span>
+                <Home className="w-4 h-4" />
                 <span className="text-sm font-medium">Back to Home</span>
               </Link>
               

@@ -29,7 +29,7 @@ const Navigation = () => {
             </div>
             <div>
               <h1 className="text-2xl font-playfair font-bold text-gradient-gold">Kumar Hotel</h1>
-              <p className="text-sm text-muted-foreground">Luxury & Comfort</p>
+              <p className="hidden sm:block text-xs text-muted-foreground">Luxury & Comfort</p>
             </div>
           </Link>
 
@@ -44,6 +44,16 @@ const Navigation = () => {
           >
             <Home className="w-4 h-4" />
             <span className="text-sm font-medium">Home</span>
+          </Link>
+
+          {/* Mobile Home Button - visible on small screens */}
+          <Link
+            to="/"
+            className="lg:hidden inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-primary to-primary/90 text-primary-foreground shadow-md border border-primary/20 hover:from-primary/90 hover:to-primary/80 transition-all duration-300"
+            onClick={() => window.fbq && window.fbq('trackCustom', 'BackToHome')}
+          >
+            <Home className="w-4 h-4" />
+            <span className="hidden sm:inline text-sm font-medium">Home</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -130,11 +140,11 @@ const Navigation = () => {
                   <span>+91 9917132288</span>
                 </a>
                 <a
-                  href="mailto:ashwani.kumar991713@gmail.com"
+                  href="mailto:ashwanikumar991713@gmail.com"
                   className="flex items-center space-x-2 text-sm text-muted-foreground hover:text-primary transition-colors py-2"
                 >
                   <Mail className="w-4 h-4" />
-                  <span>ashwani.kumar991713@gmail.com</span>
+                  <span>ashwanikumar991713@gmail.com</span>
                 </a>
               </div>
             </div>

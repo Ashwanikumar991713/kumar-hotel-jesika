@@ -71,10 +71,10 @@ const Contact = () => {
                   </div>
                 </div>
                 <a 
-                  href="mailto:ashwani.kumar991713@gmail.com" 
+                  href="mailto:ashwanikumar991713@gmail.com" 
                   className="text-primary hover:text-primary-dark font-semibold transition-colors break-all"
                 >
-                  ashwani.kumar991713@gmail.com
+                  ashwanikumar991713@gmail.com
                 </a>
                 <p className="text-sm text-muted-foreground mt-2">
                   We respond within 4-6 hours

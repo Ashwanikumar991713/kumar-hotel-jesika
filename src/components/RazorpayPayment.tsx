@@ -93,11 +93,12 @@ const RazorpayPayment = ({ paymentData, onSuccess, onError }: RazorpayPaymentPro
         payment_type: 'advance'
       };
 
-      await fetch('https://n8n.srv907955.hstgr.cloud/webhook-test/09675abe-1b05-4a53-b3e1-e1c56cde6c95', {
+      await fetch('https://n8n.srv907955.hstgr.cloud/webhook-test/kumarhotel', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        mode: 'no-cors',
         body: JSON.stringify(webhookData),
       });
     } catch (error) {

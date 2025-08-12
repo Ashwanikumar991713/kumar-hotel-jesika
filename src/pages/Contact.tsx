@@ -1,19 +1,52 @@
-import { Phone, Mail, MapPin, Clock, MessageCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, MessageCircle, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-
+import { useState } from 'react';
 const Contact = () => {
   const { toast } = useToast();
+  const [submittedName, setSubmittedName] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toast({
-      title: "Message Sent!",
-      description: "We'll get back to you within 24 hours. For urgent inquiries, please call us directly.",
-    });
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+
+    const payload = {
+      source: 'contact_form',
+      name: (fd.get('name') as string) || '',
+      email: (fd.get('email') as string) || '',
+      phone: (fd.get('phone') as string) || '',
+      subject: (fd.get('subject') as string) || '',
+      message: (fd.get('message') as string) || '',
+      url: window.location.href,
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      setIsSubmitting(true);
+      await fetch('https://n8n.srv907955.hstgr.cloud/webhook-test/kumarhotel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        mode: 'no-cors',
+        body: JSON.stringify(payload),
+      });
+
+      setSubmittedName((fd.get('name') as string) || 'Guest');
+      toast({
+        title: 'Message Sent!',
+        description: "Thanks for reaching out. We'll get back to you within 24 hours.",
+      });
+      form.reset();
+    } catch (error) {
+      console.error('Contact webhook error:', error);
+      toast({ title: 'Error', description: 'Failed to send message. Please try again.', variant: 'destructive' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -136,65 +169,96 @@ const Contact = () => {
                   Send us a Message
                 </h2>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="contact-name">Name *</Label>
-                      <Input
-                        id="contact-name"
-                        placeholder="Your full name"
-                        required
-                        className="border-border focus:border-primary"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="contact-email">Email *</Label>
-                      <Input
-                        id="contact-email"
-                        type="email"
-                        placeholder="your.email@example.com"
-                        required
-                        className="border-border focus:border-primary"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="contact-phone">Phone</Label>
-                      <Input
-                        id="contact-phone"
-                        type="tel"
-                        placeholder="+91 9917132288"
-                        className="border-border focus:border-primary"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="contact-subject">Subject *</Label>
-                      <Input
-                        id="contact-subject"
-                        placeholder="What is this regarding?"
-                        required
-                        className="border-border focus:border-primary"
-                      />
+                {submittedName ? (
+                  <div className="rounded-2xl p-8 bg-gradient-to-r from-primary to-primary-light text-primary-foreground shadow-lg border border-primary/20 animate-enter">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-12 h-12 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+                        <CheckCircle2 className="w-7 h-7" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-playfair font-bold mb-2">Thank you, {submittedName}!</h3>
+                        <p className="opacity-90">Your message has been sent successfully. Our team will contact you within 24 hours via email/phone.</p>
+                        <button
+                          type="button"
+                          onClick={() => setSubmittedName(null)}
+                          className="mt-6 inline-flex items-center px-4 py-2 rounded-lg bg-background/20 hover:bg-background/30 text-primary-foreground transition-all"
+                        >
+                          Send another message
+                        </button>
+                      </div>
                     </div>
                   </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="contact-name">Name *</Label>
+                        <Input
+                          id="contact-name"
+                          name="name"
+                          placeholder="Your full name"
+                          required
+                          disabled={isSubmitting}
+                          className="border-border focus:border-primary"
+                        />
+                      </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="contact-message">Message *</Label>
-                    <Textarea
-                      id="contact-message"
-                      placeholder="Tell us how we can help you..."
-                      required
-                      className="border-border focus:border-primary min-h-32"
-                      rows={6}
-                    />
-                  </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="contact-email">Email *</Label>
+                        <Input
+                          id="contact-email"
+                          name="email"
+                          type="email"
+                          placeholder="your.email@example.com"
+                          required
+                          disabled={isSubmitting}
+                          className="border-border focus:border-primary"
+                        />
+                      </div>
 
-                  <Button type="submit" className="btn-luxury w-full md:w-auto">
-                    Send Message
-                  </Button>
-                </form>
+                      <div className="space-y-2">
+                        <Label htmlFor="contact-phone">Phone</Label>
+                        <Input
+                          id="contact-phone"
+                          name="phone"
+                          type="tel"
+                          placeholder="+91 9917132288"
+                          disabled={isSubmitting}
+                          className="border-border focus:border-primary"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="contact-subject">Subject *</Label>
+                        <Input
+                          id="contact-subject"
+                          name="subject"
+                          placeholder="What is this regarding?"
+                          required
+                          disabled={isSubmitting}
+                          className="border-border focus:border-primary"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="contact-message">Message *</Label>
+                      <Textarea
+                        id="contact-message"
+                        name="message"
+                        placeholder="Tell us how we can help you..."
+                        required
+                        disabled={isSubmitting}
+                        className="border-border focus:border-primary min-h-32"
+                        rows={6}
+                      />
+                    </div>
+
+                    <Button type="submit" disabled={isSubmitting} className="btn-luxury w-full md:w-auto">
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
+                    </Button>
+                  </form>
+                )}
               </div>
             </div>
           </div>

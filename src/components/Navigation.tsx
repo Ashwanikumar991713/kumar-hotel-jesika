@@ -33,28 +33,7 @@ const Navigation = () => {
             </div>
           </Link>
 
-          {/* Back to Home Button */}
-          <Link 
-            to="/" 
-            className="hidden lg:flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary to-primary/90 
-                       hover:from-primary/90 hover:to-primary/80 text-primary-foreground transition-all duration-300 
-                       hover:scale-105 shadow-lg hover:shadow-xl shadow-primary/25 hover:shadow-primary/40
-                       border border-primary/20 hover:border-primary/30 backdrop-blur-sm"
-            onClick={() => window.fbq && window.fbq('trackCustom', 'BackToHome')}
-          >
-            <Home className="w-4 h-4" />
-            <span className="text-sm font-medium">Home</span>
-          </Link>
 
-          {/* Mobile Home Button - visible on small screens */}
-          <Link
-            to="/"
-            className="lg:hidden inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-primary to-primary/90 text-primary-foreground shadow-md border border-primary/20 hover:from-primary/90 hover:to-primary/80 transition-all duration-300"
-            onClick={() => window.fbq && window.fbq('trackCustom', 'BackToHome')}
-          >
-            <Home className="w-4 h-4" />
-            <span className="hidden sm:inline text-sm font-medium">Home</span>
-          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
@@ -102,20 +81,6 @@ const Navigation = () => {
         {isOpen && (
           <div className="lg:hidden pb-6 pt-2 animate-fade-in">
             <div className="flex flex-col space-y-4">
-              {/* Mobile Back to Home Button */}
-              <Link 
-                to="/" 
-                onClick={() => {
-                  setIsOpen(false);
-                  window.fbq && window.fbq('trackCustom', 'BackToHome');
-                }}
-                className="flex items-center space-x-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-primary to-primary/90 
-                           text-primary-foreground transition-all duration-300 hover:from-primary/90 hover:to-primary/80
-                           shadow-md hover:shadow-lg shadow-primary/20"
-              >
-                <Home className="w-4 h-4" />
-                <span className="text-sm font-medium">Back to Home</span>
-              </Link>
               
               {navItems.map((item) => (
                 <Link

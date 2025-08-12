@@ -14,6 +14,7 @@ import Gallery from "./pages/Gallery";
 import Book from "./pages/Book";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import BackToHome from "./components/BackToHome";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,9 @@ const App = () => (
       <BrowserRouter>
         <div className="min-h-screen flex flex-col">
           <Navigation />
+          {/* Back to Home link on all pages except Home */}
+          {/* It is fixed and unobtrusive, not part of the navbar */}
+          <BackToHome />
           <main className="flex-1">
             <Routes>
               <Route path="/" element={<Home />} />

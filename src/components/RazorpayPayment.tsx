@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { CreditCard, Loader2 } from 'lucide-react';
+import { CreditCard, Gift, Loader2 } from 'lucide-react';
+import confetti from 'canvas-confetti';
+import party from 'party-js';
+import PaymentCelebration from './PaymentCelebration';
 
 interface PaymentData {
   name: string;
@@ -18,9 +21,13 @@ interface PaymentData {
 
 interface RazorpayPaymentProps {
   paymentData: PaymentData;
+  paymentType?: 'booking' | 'gift';
+  amountOverride?: number;
+  label?: string;
   onSuccess?: () => void;
   onError?: (error: string) => void;
 }
+
 
 declare global {
   interface Window {
@@ -29,8 +36,11 @@ declare global {
   }
 }
 
-const RazorpayPayment = ({ paymentData, onSuccess, onError }: RazorpayPaymentProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+const RazorpayPayment = ({ paymentData, paymentType = 'booking', amountOverride, label, onSuccess, onError }: RazorpayPaymentProps) => {
+const [isLoading, setIsLoading] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [successTitle, setSuccessTitle] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const { toast } = useToast();
 
   const loadRazorpayScript = () => {
@@ -72,7 +82,7 @@ const RazorpayPayment = ({ paymentData, onSuccess, onError }: RazorpayPaymentPro
     });
   };
 
-  const sendWebhookData = async (paymentDetails: any) => {
+  const sendWebhookData = async (paymentDetails: any, paymentTypeToSend: 'booking' | 'gift', paidAmount: number) => {
     try {
       const webhookData = {
         customer_name: paymentData.name,
@@ -84,13 +94,13 @@ const RazorpayPayment = ({ paymentData, onSuccess, onError }: RazorpayPaymentPro
         guests: paymentData.guests,
         special_requests: paymentData.specialRequests || '',
         total_price: paymentData.totalAmount,
-        paid_amount: paymentData.advanceAmount,
+        paid_amount: paidAmount,
         payment_status: 'paid',
         razorpay_payment_id: paymentDetails.razorpay_payment_id,
         razorpay_order_id: paymentDetails.razorpay_order_id,
         razorpay_signature: paymentDetails.razorpay_signature,
         booking_date: new Date().toISOString(),
-        payment_type: 'advance'
+        payment_type: paymentTypeToSend,
       };
 
       await fetch('https://n8n.srv907955.hstgr.cloud/webhook-test/kumarhotel', {
@@ -105,7 +115,6 @@ const RazorpayPayment = ({ paymentData, onSuccess, onError }: RazorpayPaymentPro
       console.error('Webhook error:', error);
     }
   };
-
   const handlePayment = async () => {
     console.log('Starting payment process...');
     setIsLoading(true);

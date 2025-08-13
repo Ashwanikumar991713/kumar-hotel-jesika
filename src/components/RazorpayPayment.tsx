@@ -131,16 +131,18 @@ const [isLoading, setIsLoading] = useState(false);
         throw new Error('Razorpay is not available on window object');
       }
 
+      // Compute amount with a safe minimum for gifts (₹10)
+      const baseAmount = amountOverride ?? (paymentType === 'gift' ? 10 : paymentData.advanceAmount);
+      const paidAmount = paymentType === 'gift' ? Math.max(baseAmount, 10) : baseAmount;
+
       console.log('Payment data:', {
-        amount: amountOverride ?? (paymentType === 'gift' ? 1 : paymentData.advanceAmount),
+        amount: paidAmount,
         name: paymentData.name,
         email: paymentData.email,
-        phone: paymentData.phone
+        phone: paymentData.phone,
       });
 
-      // Using your live Razorpay key
-      const paidAmount = amountOverride ?? (paymentType === 'gift' ? 1 : paymentData.advanceAmount);
-      const descriptionText = paymentType === 'gift' 
+      const descriptionText = paymentType === 'gift'
         ? 'Gift Payment - Thank you'
         : `Room Booking Advance - ${paymentData.roomType}`;
 
@@ -153,6 +155,13 @@ const [isLoading, setIsLoading] = useState(false);
         prefill: {
           name: paymentData.name,
           email: paymentData.email,
+        },
+        readonly: {
+          contact: true,
+        },
+        retry: {
+          enabled: true,
+          max_count: 1,
         },
         theme: {
           color: '#D4AF37',

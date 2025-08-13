@@ -293,8 +293,8 @@ const Book = () => {
 
                         <RazorpayPayment
                           paymentType="gift"
-                          amountOverride={1}
-                          label="Send a Gift 🎁 ₹1"
+                          amountOverride={10}
+                          label="Send a Gift 🎁 ₹10"
                           paymentData={{
                             name: formData.name,
                             email: formData.email,

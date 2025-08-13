@@ -153,7 +153,6 @@ const [isLoading, setIsLoading] = useState(false);
         prefill: {
           name: paymentData.name,
           email: paymentData.email,
-          contact: paymentData.phone,
         },
         theme: {
           color: '#D4AF37',

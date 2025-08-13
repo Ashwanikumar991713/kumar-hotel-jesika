@@ -5,10 +5,16 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import confetti from 'canvas-confetti';
+import party from 'party-js';
+import PaymentCelebration from '@/components/PaymentCelebration';
 const Contact = () => {
   const { toast } = useToast();
   const [submittedName, setSubmittedName] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [successTitle, setSuccessTitle] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,7 +41,12 @@ const Contact = () => {
         body: JSON.stringify(payload),
       });
 
-      setSubmittedName((fd.get('name') as string) || 'Guest');
+      setSubmittedName(payload.name || 'Guest');
+      setSuccessTitle(`Thank you, ${payload.name || 'Guest'}!`);
+      setSuccessMessage("Your message has been sent successfully. We'll reach out shortly.");
+      confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+      try { party.confetti(document.body); party.sparkles?.(document.body); } catch {}
+      setShowCelebration(true);
       toast({
         title: 'Message Sent!',
         description: "Thanks for reaching out. We'll get back to you within 24 hours.",
@@ -376,6 +387,13 @@ const Contact = () => {
           </div>
         </div>
       </section>
+
+      <PaymentCelebration
+        open={showCelebration}
+        title={successTitle}
+        message={successMessage}
+        onClose={() => setShowCelebration(false)}
+      />
     </div>
   );
 };

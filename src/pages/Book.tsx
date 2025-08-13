@@ -262,33 +262,66 @@ const Book = () => {
                         </div>
                       </div>
 
-                      <RazorpayPayment
-                        paymentData={{
-                          name: formData.name,
-                          email: formData.email,
-                          phone: formData.phone,
-                          roomType: formData.roomType,
-                          checkIn: formData.checkIn,
-                          checkOut: formData.checkOut,
-                          guests: formData.guests,
-                          specialRequests: formData.specialRequests,
-                          totalAmount,
-                          advanceAmount
-                        }}
-                        onSuccess={() => {
-                          toast({
-                            title: "Booking Confirmed!",
-                            description: "Your advance payment is successful. We'll send you booking confirmation details shortly.",
-                          });
-                        }}
-                        onError={(error) => {
-                          toast({
-                            title: "Payment Failed",
-                            description: error,
-                            variant: "destructive",
-                          });
-                        }}
-                      />
+                      <div className="space-y-3">
+                        <RazorpayPayment
+                          paymentData={{
+                            name: formData.name,
+                            email: formData.email,
+                            phone: formData.phone,
+                            roomType: formData.roomType,
+                            checkIn: formData.checkIn,
+                            checkOut: formData.checkOut,
+                            guests: formData.guests,
+                            specialRequests: formData.specialRequests,
+                            totalAmount,
+                            advanceAmount
+                          }}
+                          onSuccess={() => {
+                            toast({
+                              title: "Booking Confirmed!",
+                              description: `🎉 Congratulations ${formData.name}, your booking is confirmed!`,
+                            });
+                          }}
+                          onError={(error) => {
+                            toast({
+                              title: "Payment Failed",
+                              description: error || "Unable to process payment. Please try again.",
+                              variant: "destructive",
+                            });
+                          }}
+                        />
+
+                        <RazorpayPayment
+                          paymentType="gift"
+                          amountOverride={1}
+                          label="Send a Gift 🎁 ₹1"
+                          paymentData={{
+                            name: formData.name,
+                            email: formData.email,
+                            phone: formData.phone,
+                            roomType: formData.roomType,
+                            checkIn: formData.checkIn,
+                            checkOut: formData.checkOut,
+                            guests: formData.guests,
+                            specialRequests: formData.specialRequests,
+                            totalAmount,
+                            advanceAmount
+                          }}
+                          onSuccess={() => {
+                            toast({
+                              title: "Thank You!",
+                              description: `Thank you, ${formData.name}, for your kind gift to Kumar Hotel 💛`,
+                            });
+                          }}
+                          onError={(error) => {
+                            toast({
+                              title: "Gift Not Completed",
+                              description: error || "We couldn’t process your gift this time. Please try again.",
+                              variant: "destructive",
+                            });
+                          }}
+                        />
+                      </div>
                     </div>
                   ) : (
                     <div className="text-center p-4 bg-muted/30 rounded-lg">

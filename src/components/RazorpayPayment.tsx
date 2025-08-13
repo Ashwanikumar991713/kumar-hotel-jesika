@@ -132,19 +132,24 @@ const [isLoading, setIsLoading] = useState(false);
       }
 
       console.log('Payment data:', {
-        amount: paymentData.advanceAmount,
+        amount: amountOverride ?? (paymentType === 'gift' ? 1 : paymentData.advanceAmount),
         name: paymentData.name,
         email: paymentData.email,
         phone: paymentData.phone
       });
 
       // Using your live Razorpay key
+      const paidAmount = amountOverride ?? (paymentType === 'gift' ? 1 : paymentData.advanceAmount);
+      const descriptionText = paymentType === 'gift' 
+        ? 'Gift Payment - Thank you'
+        : `Room Booking Advance - ${paymentData.roomType}`;
+
       const options = {
         key: 'rzp_live_iPfvysNSuplCpH', // Your actual live key
-        amount: paymentData.advanceAmount * 100, // Amount in paise
+        amount: paidAmount * 100, // Amount in paise
         currency: 'INR',
         name: 'Kumar Hotel',
-        description: `Room Booking Advance - ${paymentData.roomType}`,
+        description: descriptionText,
         prefill: {
           name: paymentData.name,
           email: paymentData.email,
@@ -159,29 +164,46 @@ const [isLoading, setIsLoading] = useState(false);
           // Track Meta Pixel Purchase event
           if (window.fbq) {
             window.fbq('track', 'Purchase', {
-              value: paymentData.advanceAmount,
+              value: paidAmount,
               currency: 'INR',
-              content_name: `${paymentData.roomType} - Room Booking`,
-              content_category: 'Hotel Booking'
+              content_name: paymentType === 'gift' ? 'Gift to Kumar Hotel' : `${paymentData.roomType} - Room Booking`,
+              content_category: paymentType === 'gift' ? 'Gift' : 'Hotel Booking'
             });
           }
           
           try {
             // Send data to webhook
-            await sendWebhookData(response);
+            await sendWebhookData(response, paymentType, paidAmount);
+
+            // Celebration
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            try { party.confetti(document.body); party.sparkles?.(document.body); } catch {}
+            
+            const isGift = paymentType === 'gift';
+            setSuccessTitle(isGift ? `Thank you, ${paymentData.name}!` : `🎉 Congratulations ${paymentData.name}!`);
+            setSuccessMessage(
+              isGift
+                ? `Thank you, ${paymentData.name}, for your kind gift to Kumar Hotel 💛`
+                : `Your advance payment of ₹${paidAmount} is successful. Your booking is confirmed!`
+            );
+            setShowCelebration(true);
             
             toast({
-              title: "Payment Successful!",
-              description: `Advance payment of ₹${paymentData.advanceAmount} completed successfully. Your booking is confirmed!`,
+              title: isGift ? 'Gift Received!' : 'Payment Successful!',
+              description: isGift
+                ? `Gift payment of ₹${paidAmount} completed successfully.`
+                : `Advance payment of ₹${paidAmount} completed successfully. Your booking is confirmed!`,
             });
             
             onSuccess?.();
           } catch (error) {
             console.error('Payment processing error:', error);
             toast({
-              title: "Payment Successful",
-              description: "Payment completed but there was an issue with booking confirmation. Please contact us.",
-              variant: "destructive",
+              title: paymentType === 'gift' ? 'Gift Processed, but…' : 'Payment Successful',
+              description: paymentType === 'gift'
+                ? 'Gift completed but there was an issue recording details. Please contact us.'
+                : 'Payment completed but there was an issue with booking confirmation. Please contact us.',
+              variant: 'destructive',
             });
           }
           setIsLoading(false);
@@ -190,9 +212,11 @@ const [isLoading, setIsLoading] = useState(false);
           ondismiss: function() {
             console.log('Payment modal dismissed');
             toast({
-              title: "Payment Cancelled",
-              description: "Payment was cancelled. Your booking is not confirmed.",
-              variant: "destructive",
+              title: paymentType === 'gift' ? 'Gift Cancelled' : 'Payment Cancelled',
+              description: paymentType === 'gift'
+                ? 'Gift payment was cancelled. You can try again anytime.'
+                : 'Payment was cancelled. Your booking is not confirmed.',
+              variant: 'destructive',
             });
             setIsLoading(false);
           }
@@ -234,24 +258,41 @@ const [isLoading, setIsLoading] = useState(false);
   };
 
   return (
-    <Button
-      onClick={handlePayment}
-      disabled={isLoading}
-      className="btn-luxury w-full"
-      size="lg"
-    >
-      {isLoading ? (
-        <>
-          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-          Processing...
-        </>
-      ) : (
-        <>
-          <CreditCard className="w-5 h-5 mr-2" />
-          Pay Advance ₹{paymentData.advanceAmount}
-        </>
-      )}
-    </Button>
+    <>
+      <Button
+        onClick={handlePayment}
+        disabled={isLoading}
+        className="btn-luxury w-full"
+        size="lg"
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+            Processing...
+          </>
+        ) : (
+          <>
+            {paymentType === 'gift' ? (
+              <Gift className="w-5 h-5 mr-2" />
+            ) : (
+              <CreditCard className="w-5 h-5 mr-2" />
+            )}
+            {label ? (
+              <span>{label}</span>
+            ) : (
+              <span>Pay Advance ₹{paymentData.advanceAmount}</span>
+            )}
+          </>
+        )}
+      </Button>
+
+      <PaymentCelebration
+        open={showCelebration}
+        title={successTitle}
+        message={successMessage}
+        onClose={() => setShowCelebration(false)}
+      />
+    </>
   );
 };
 

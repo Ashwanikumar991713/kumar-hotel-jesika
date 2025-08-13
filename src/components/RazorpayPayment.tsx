@@ -132,9 +132,10 @@ const [isLoading, setIsLoading] = useState(false);
         throw new Error('Razorpay is not available on window object');
       }
 
-      // Compute amount with a safe minimum for gifts (₹10)
-      const baseAmount = amountOverride ?? (paymentType === 'gift' ? 10 : paymentData.advanceAmount);
-      const paidAmount = paymentType === 'gift' ? Math.max(baseAmount, 10) : baseAmount;
+      // Compute amount; gifts: integer rupees >= 3
+      const baseAmount = amountOverride ?? (paymentType === 'gift' ? 3 : paymentData.advanceAmount);
+      const normalizedAmount = paymentType === 'gift' ? Math.floor(Number(baseAmount) || 0) : Number(baseAmount) || 0;
+      const paidAmount = paymentType === 'gift' ? Math.max(normalizedAmount, 3) : normalizedAmount;
 
       console.log('Creating Razorpay order...');
       
@@ -175,9 +176,6 @@ const [isLoading, setIsLoading] = useState(false);
         prefill: {
           name: paymentData.name,
           email: paymentData.email,
-        },
-        readonly: {
-          contact: true,
         },
         retry: {
           enabled: true,

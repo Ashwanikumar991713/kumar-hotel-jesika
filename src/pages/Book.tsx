@@ -65,6 +65,7 @@ const Book = () => {
   };
 
   const { totalAmount, numberOfNights, advanceAmount } = calculateTotal();
+  const [giftAmount, setGiftAmount] = useState<number>(3);
 
   // Check if form is valid for payment
   const isFormValid = formData.name && formData.email && formData.phone && 
@@ -291,10 +292,30 @@ const Book = () => {
                           }}
                         />
 
+                        {/* Custom Gift Amount */}
+                        <div className="space-y-2">
+                          <Label htmlFor="giftAmount">Gift amount (₹, minimum 3)</Label>
+                          <Input
+                            id="giftAmount"
+                            type="number"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            min={3}
+                            step={1}
+                            value={giftAmount}
+                            onChange={(e) => {
+                              const v = Math.floor(Number(e.target.value) || 0);
+                              setGiftAmount(Math.max(v, 3));
+                            }}
+                            placeholder="Enter amount (₹)"
+                            className="border-border focus:border-primary"
+                          />
+                        </div>
+
                         <RazorpayPayment
                           paymentType="gift"
-                          amountOverride={10}
-                          label="Send a Gift 🎁 ₹10"
+                          amountOverride={giftAmount}
+                          label={`Send a Gift 🎁 ₹${giftAmount}`}
                           paymentData={{
                             name: formData.name,
                             email: formData.email,

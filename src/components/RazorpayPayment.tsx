@@ -5,6 +5,7 @@ import { CreditCard, Gift, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import party from 'party-js';
 import PaymentCelebration from './PaymentCelebration';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PaymentData {
   name: string;
@@ -135,21 +136,40 @@ const [isLoading, setIsLoading] = useState(false);
       const baseAmount = amountOverride ?? (paymentType === 'gift' ? 10 : paymentData.advanceAmount);
       const paidAmount = paymentType === 'gift' ? Math.max(baseAmount, 10) : baseAmount;
 
-      console.log('Payment data:', {
-        amount: paidAmount,
-        name: paymentData.name,
-        email: paymentData.email,
-        phone: paymentData.phone,
+      console.log('Creating Razorpay order...');
+      
+      // Create order through our edge function
+      const { data: orderData, error } = await supabase.functions.invoke('create-razorpay-order', {
+        body: {
+          amount: paidAmount,
+          currency: 'INR',
+          receipt: `${paymentType}_${Date.now()}`,
+          notes: {
+            room_type: paymentData.roomType,
+            check_in: paymentData.checkIn,
+            check_out: paymentData.checkOut,
+            guests: paymentData.guests,
+            payment_type: paymentType
+          }
+        }
       });
+
+      if (error || !orderData) {
+        console.error('Order creation failed:', error);
+        throw new Error('Failed to create payment order');
+      }
+
+      console.log('Order created:', orderData);
 
       const descriptionText = paymentType === 'gift'
         ? 'Gift Payment - Thank you'
         : `Room Booking Advance - ${paymentData.roomType}`;
 
       const options = {
-        key: 'rzp_live_iPfvysNSuplCpH', // Your actual live key
-        amount: paidAmount * 100, // Amount in paise
-        currency: 'INR',
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        order_id: orderData.orderId,
         name: 'Kumar Hotel',
         description: descriptionText,
         prefill: {

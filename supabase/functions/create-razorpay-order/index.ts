@@ -30,6 +30,7 @@ serve(async (req) => {
     console.log('Key ID:', keyId);
     console.log('Secret key available:', !!keySecret);
     console.log('Secret key length:', keySecret?.length || 0);
+    console.log('All env vars:', Object.keys(Deno.env.toObject()));
 
     if (!keySecret) {
       console.error('Razorpay secret key not found in environment variables');

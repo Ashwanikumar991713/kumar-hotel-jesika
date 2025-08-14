@@ -28,13 +28,31 @@ serve(async (req) => {
     const keySecret = Deno.env.get('RAZORPAY_SECRET_KEY');
 
     console.log('Key ID:', keyId);
-    console.log('Secret key available:', keySecret ? 'Yes' : 'No');
+    console.log('Secret key available:', !!keySecret);
+    console.log('Secret key length:', keySecret?.length || 0);
 
     if (!keySecret) {
       console.error('Razorpay secret key not found in environment variables');
-      console.error('Available env vars:', Object.keys(Deno.env.toObject()));
       return new Response(
-        JSON.stringify({ error: 'Razorpay configuration missing' }),
+        JSON.stringify({ 
+          error: 'Razorpay configuration missing',
+          details: 'Secret key not configured properly'
+        }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    // Validate key format
+    if (!keySecret.startsWith('rzp_')) {
+      console.error('Invalid secret key format');
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid Razorpay secret key format',
+          details: 'Secret key must start with rzp_'
+        }),
         { 
           status: 500, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

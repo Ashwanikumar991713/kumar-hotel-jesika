@@ -68,9 +68,15 @@ const Book = () => {
   const [giftAmount, setGiftAmount] = useState<number>(3);
 
   // Check if form is valid for payment
-  const isFormValid = formData.name && formData.email && formData.phone && 
-                     formData.checkIn && formData.checkOut && formData.roomType && 
-                     formData.guests && totalAmount > 0;
+  const isFormValid = formData.name.trim() && 
+                     formData.email.trim() && 
+                     formData.phone.trim() && 
+                     formData.checkIn && 
+                     formData.checkOut && 
+                     formData.roomType && 
+                     formData.guests && 
+                     totalAmount > 0 && 
+                     numberOfNights > 0;
 
   return (
     <div className="pt-20">

@@ -27,8 +27,12 @@ serve(async (req) => {
     const keyId = 'rzp_live_R5KysAgQgZ8YHO';
     const keySecret = Deno.env.get('RAZORPAY_SECRET_KEY');
 
+    console.log('Key ID:', keyId);
+    console.log('Secret key available:', keySecret ? 'Yes' : 'No');
+
     if (!keySecret) {
-      console.error('Razorpay secret key not found');
+      console.error('Razorpay secret key not found in environment variables');
+      console.error('Available env vars:', Object.keys(Deno.env.toObject()));
       return new Response(
         JSON.stringify({ error: 'Razorpay configuration missing' }),
         { 

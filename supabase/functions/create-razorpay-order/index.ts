@@ -24,7 +24,7 @@ serve(async (req) => {
     console.log('Creating Razorpay order:', { amount, currency, receipt, notes });
 
     // Get Razorpay credentials from environment
-    const keyId = 'rzp_live_R5KysAgQgZ8YHO';
+    const keyId = 'rzp_live_R5MFOqdF0w7oDj';
     const keySecret = Deno.env.get('RAZORPAY_SECRET_KEY');
 
     console.log('Key ID:', keyId);
